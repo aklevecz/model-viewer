@@ -1,0 +1,217 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+#canvas-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+#ui-panel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 300px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  z-index: 100;
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+.control-group {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 15px;
+}
+
+.control-group h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+button {
+  background: #4CAF50;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+input[type="file"] {
+  margin: 10px 0;
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+input[type="color"] {
+  width: 50px;
+  height: 30px;
+  border: none;
+  margin-left: 10px;
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.flex-row label {
+  flex: 1;
+}
+
+.export-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#progress-container {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  z-index: 1000;
+}
+
+#progress-bar {
+  width: 300px;
+  height: 20px;
+  background-color: #333;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+#progress {
+  height: 100%;
+  background-color: #4CAF50;
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.2s;
+}
+
+/* Additional CSS for the updated export controls */
+.angle-inputs .flex-row,
+.distance-checkboxes .flex-row {
+  margin-bottom: 8px;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #ccc;
+  margin-left: 8px;
+}
+
+.distance-checkboxes .flex-row {
+  justify-content: flex-start;
+}
+
+.distance-checkboxes input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.export-summary {
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(76, 175, 80, 0.2);
+  border-radius: 4px;
+}
+
+.export-summary p {
+  margin: 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* New styles for the improved camera controls */
+.camera-view-controls {
+  border: 1px solid #444;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.camera-view-controls h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #7FFFD4;
+}
+
+.camera-view-controls .helper-text {
+  display: block;
+  margin-left: 0;
+  margin-top: 3px;
+}
+
+.view-enabled {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.view-enabled input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.camera-params {
+  margin-left: 20px;
+}
+
+.collapsible {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-out;
+}
+
+.expanded {
+  height: auto;
+}
+
+/* New styles for normalization box */
+#normalization-square {
+  position: absolute;
+  border: 2px dashed rgba(255, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 90;
+  display: none;
+}
+
+.normalization-control-group {
+  margin-top: 15px;
+  background: rgba(255, 255, 0, 0.1);
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.normalization-control-group h3 {
+  color: #FF0000;
+  margin-top: 0;
+}

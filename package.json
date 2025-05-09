@@ -1,0 +1,19 @@
+{
+  "name": "model-image-renderer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
+    "three": "^0.151.3"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}
