@@ -78,8 +78,10 @@
         </div>
 
         <!-- Updated background controls section -->
+        <!-- Background controls without the zoom slider -->
         <div class="control-group">
           <h3>Background</h3>
+
           <div class="flex-row">
             <label for="bg-type">Background Type</label>
             <select id="bg-type">
@@ -88,26 +90,34 @@
               <option value="transparent">Transparent</option>
             </select>
           </div>
+
           <div id="bg-color-row" class="flex-row" style="display: none">
             <label for="bg-color">Background Color</label>
             <input type="color" id="bg-color" value="#ffffff" />
           </div>
 
-          <!-- Preview background info message -->
-          <div class="helper-message">Background changes are applied instantly.</div>
+          <!-- Info message about HDR environment details -->
+          <div class="helper-message">
+            Environment backgrounds use equirectangular HDR mapping for accurate representation.
+          </div>
 
-          <!-- Background preview examples section -->
+          <!-- Background preset buttons -->
           <div class="background-presets">
             <h4>Quick Presets</h4>
             <div class="preset-buttons">
               <button class="preset-btn" data-type="environment" data-hdr="neutral" data-color="">Studio</button>
               <button class="preset-btn" data-type="environment" data-hdr="venice" data-color="">Sunset</button>
+              <button class="preset-btn" data-type="environment" data-hdr="footprint" data-color="">Tunnel</button>
+              <button class="preset-btn" data-type="environment" data-hdr="cathedral" data-color="">Mountain</button>
+              <button class="preset-btn" data-type="environment" data-hdr="park" data-color="">Park</button>
               <button class="preset-btn" data-type="color" data-hdr="" data-color="#000000">Black</button>
               <button class="preset-btn" data-type="color" data-hdr="" data-color="#ffffff">White</button>
-              <button class="preset-btn" data-type="transparent" data-hdr="" data-color="">Transparent</button>
+              <button class="preset-btn" data-type="color" data-hdr="" data-color="#0088ff">Blue</button>
+              <button class="preset-btn" data-type="transparent" data-hdr="" data-color="">Clear</button>
             </div>
           </div>
         </div>
+
         <h4>Camera Views</h4>
 
         <!-- Top View Controls -->

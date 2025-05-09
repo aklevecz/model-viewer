@@ -23,6 +23,8 @@ export class ModelViewer {
     this.originalModelPosition = new THREE.Vector3();
     this.environmentMap = null;
 
+    this.envFns = {};
+
     // Normalization properties
     this.squareVisible = false;
 
@@ -36,7 +38,7 @@ export class ModelViewer {
     this.scene = new THREE.Scene();
 
     // Camera setup - use a lower FOV for less perspective distortion
-    this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(105, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.camera.position.set(5, 2, 5);
 
     // Renderer setup
@@ -283,8 +285,9 @@ export class ModelViewer {
   updateBackgroundPreview() {
     const bgType = document.getElementById("bg-type").value;
     const bgColor = document.getElementById("bg-color").value;
+    const hdrType = document.getElementById("hdr-selection").value;
 
-    // Apply background changes based on selected type
+    // Apply background based on type
     if (bgType === "transparent") {
       this.renderer.alpha = true;
       this.scene.background = null;
@@ -293,10 +296,17 @@ export class ModelViewer {
       this.scene.background = new THREE.Color(bgColor);
     } else if (bgType === "environment") {
       this.renderer.alpha = false;
-      this.scene.background = this.environmentMap;
+
+      // Use the stored original texture if available
+      if (this.envFns[hdrType] && this.envFns[hdrType].background) {
+        this.scene.background = this.envFns[hdrType].background;
+      } else {
+        // Fallback to environment map if original not available
+        this.scene.background = this.environmentMap;
+      }
     }
 
-    // Force a render to update the view
+    // Force a render
     this.render();
   }
 
@@ -322,17 +332,38 @@ export class ModelViewer {
     const path = this.hdrPaths[name];
     const rgbeLoader = new RGBELoader();
 
-    rgbeLoader.load(path, (texture) => {
-      this.environmentMap = this.pmremGenerator.fromEquirectangular(texture).texture;
-      this.scene.environment = this.environmentMap;
+    // Show loading indicator or similar if you have one
 
-      // Update background if background type is "environment"
+    rgbeLoader.load(path, (texture) => {
+      // Set correct mapping for environment maps
+      texture.mapping = THREE.EquirectangularReflectionMapping;
+
+      // Process the texture for environment lighting (PBR)
+      this.environmentMap = this.pmremGenerator.fromEquirectangular(texture).texture;
+
+      // Store both versions - one for lighting, one for background
+      this.envFns[name] = {
+        background: texture, // Keep original for background
+        environment: this.environmentMap, // Processed for reflections
+      };
+
+      // Apply to scene
+      this.scene.environment = this.environmentMap; // For reflections/lighting
+      this.scene.background.repeat.set(0.15, 0.15);
+      console.log(this.scene.background.repeat);
+      // Center the scaling
+      this.scene.background.center.set(0.5, 0.5);
+
+      // If background type is set to environment, also update the background
       if (document.getElementById("bg-type").value === "environment") {
-        this.scene.background = this.environmentMap;
+        this.scene.background = texture; // Direct background use
       }
 
-      texture.dispose();
+      // Clean up
       this.pmremGenerator.dispose();
+
+      // Update the view
+      this.render();
     });
   }
 
