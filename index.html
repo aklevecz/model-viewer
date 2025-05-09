@@ -1,191 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Three.js Model Viewer with Export</title>
-    <link rel="stylesheet" href="./src/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
     <div id="canvas-container"></div>
     <div id="normalization-square"></div>
 
     <div id="ui-panel">
-        <h2>Model Viewer Controls</h2>
+      <h2>Model Viewer Controls</h2>
 
+      <div class="control-group">
+        <h3>Model & Environment</h3>
+        <label for="model-upload">Upload GLB Model:</label>
+        <input type="file" id="model-upload" accept=".glb" />
+
+        <label for="hdr-selection">Select HDR Background:</label>
+        <select id="hdr-selection">
+          <option value="neutral">Studio Small</option>
+          <option value="venice">Venice Sunset</option>
+          <option value="footprint">Concrete Tunnel</option>
+          <option value="cathedral">Immenstadter Horn</option>
+          <option value="park">Kloppenheim</option>
+        </select>
+      </div>
+
+      <!-- New Normalization Controls -->
+      <div class="normalization-control-group">
+        <h3>Normalization Reference</h3>
+        <div class="flex-row">
+          <label for="show-square">Show Reference Square:</label>
+          <input type="checkbox" id="show-square" />
+        </div>
+        <div class="helper-text">
+          Adjust your model to fit within the red square - this will be used for export scaling
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>Lighting Controls</h3>
+        <div class="flex-row">
+          <label for="exposure">Exposure:</label>
+          <input type="range" id="exposure" min="0" max="2" step="0.01" value="1" />
+          <span id="exposure-value">1.00</span>
+        </div>
+
+        <div class="flex-row">
+          <label for="direct-intensity">Direct Light Intensity:</label>
+          <input type="range" id="direct-intensity" min="0" max="5" step="0.1" value="1" />
+          <span id="intensity-value">1.0</span>
+        </div>
+
+        <div class="flex-row">
+          <label for="direct-color">Direct Light Color:</label>
+          <input type="color" id="direct-color" value="#ffffff" />
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>Export Settings</h3>
+
+        <div class="flex-row">
+          <label for="bg-type">Background Type:</label>
+          <select id="bg-type">
+            <option value="transparent">Transparent</option>
+            <option value="color">Color</option>
+            <option value="environment">Environment (HDR)</option>
+          </select>
+        </div>
+
+        <div class="flex-row" id="bg-color-row">
+          <label for="bg-color">Background Color:</label>
+          <input type="color" id="bg-color" value="#ffffff" />
+        </div>
+
+        <!-- Updated background controls section -->
         <div class="control-group">
-            <h3>Model & Environment</h3>
-            <label for="model-upload">Upload GLB Model:</label>
-            <input type="file" id="model-upload" accept=".glb">
-
-            <label for="hdr-selection">Select HDR Background:</label>
-            <select id="hdr-selection">
-                <option value="neutral">Studio Small</option>
-                <option value="venice">Venice Sunset</option>
-                <option value="footprint">Concrete Tunnel</option>
-                <option value="cathedral">Immenstadter Horn</option>
-                <option value="park">Kloppenheim</option>
+          <h3>Background</h3>
+          <div class="flex-row">
+            <label for="bg-type">Background Type</label>
+            <select id="bg-type">
+              <option value="environment">Environment</option>
+              <option value="color">Solid Color</option>
+              <option value="transparent">Transparent</option>
             </select>
+          </div>
+          <div id="bg-color-row" class="flex-row" style="display: none">
+            <label for="bg-color">Background Color</label>
+            <input type="color" id="bg-color" value="#ffffff" />
+          </div>
+
+          <!-- Preview background info message -->
+          <div class="helper-message">Background changes are applied instantly.</div>
+
+          <!-- Background preview examples section -->
+          <div class="background-presets">
+            <h4>Quick Presets</h4>
+            <div class="preset-buttons">
+              <button class="preset-btn" data-type="environment" data-hdr="neutral" data-color="">Studio</button>
+              <button class="preset-btn" data-type="environment" data-hdr="venice" data-color="">Sunset</button>
+              <button class="preset-btn" data-type="color" data-hdr="" data-color="#000000">Black</button>
+              <button class="preset-btn" data-type="color" data-hdr="" data-color="#ffffff">White</button>
+              <button class="preset-btn" data-type="transparent" data-hdr="" data-color="">Transparent</button>
+            </div>
+          </div>
+        </div>
+        <h4>Camera Views</h4>
+
+        <!-- Top View Controls -->
+        <div class="camera-view-controls">
+          <div class="view-enabled">
+            <input type="checkbox" id="top-view-enabled" checked />
+            <label for="top-view-enabled">Top View</label>
+          </div>
+          <div id="top-view-params" class="camera-params collapsible expanded">
+            <div class="flex-row">
+              <label for="top-rotation">Rotation (degrees):</label>
+              <input type="number" id="top-rotation" min="0" max="360" value="140" />
+              <span class="helper-text">Horizontal rotation around the object</span>
+            </div>
+            <div class="flex-row">
+              <label for="top-angle">View Angle (degrees):</label>
+              <input type="number" id="top-angle" min="0" max="90" value="45" />
+              <span class="helper-text">0° = top-down, 90° = horizontal</span>
+            </div>
+            <div class="flex-row">
+              <label for="angle-top">Number of Images:</label>
+              <input type="number" id="angle-top" min="0" max="20" value="5" />
+            </div>
+          </div>
         </div>
 
-        <!-- New Normalization Controls -->
-        <div class="normalization-control-group">
-            <h3>Normalization Reference</h3>
+        <!-- Middle View Controls -->
+        <div class="camera-view-controls">
+          <div class="view-enabled">
+            <input type="checkbox" id="middle-view-enabled" checked />
+            <label for="middle-view-enabled">Middle View</label>
+          </div>
+          <div id="middle-view-params" class="camera-params collapsible expanded">
             <div class="flex-row">
-                <label for="show-square">Show Reference Square:</label>
-                <input type="checkbox" id="show-square">
+              <label for="middle-rotation">Rotation (degrees):</label>
+              <input type="number" id="middle-rotation" min="0" max="360" value="140" />
+              <span class="helper-text">Horizontal rotation around the object</span>
             </div>
-            <div class="helper-text">
-                Adjust your model to fit within the red square - this will be used for export scaling
+            <div class="flex-row">
+              <label for="middle-angle">View Angle (degrees):</label>
+              <input type="number" id="middle-angle" min="0" max="180" value="90" />
+              <span class="helper-text">90° = horizontal view</span>
             </div>
+            <div class="flex-row">
+              <label for="angle-middle">Number of Images:</label>
+              <input type="number" id="angle-middle" min="0" max="20" value="5" />
+            </div>
+          </div>
         </div>
 
-        <div class="control-group">
-            <h3>Lighting Controls</h3>
+        <!-- Bottom View Controls -->
+        <div class="camera-view-controls">
+          <div class="view-enabled">
+            <input type="checkbox" id="bottom-view-enabled" checked />
+            <label for="bottom-view-enabled">Bottom View</label>
+          </div>
+          <div id="bottom-view-params" class="camera-params collapsible expanded">
             <div class="flex-row">
-                <label for="exposure">Exposure:</label>
-                <input type="range" id="exposure" min="0" max="2" step="0.01" value="1">
-                <span id="exposure-value">1.00</span>
+              <label for="bottom-rotation">Rotation (degrees):</label>
+              <input type="number" id="bottom-rotation" min="0" max="360" value="140" />
+              <span class="helper-text">Horizontal rotation around the object</span>
             </div>
-
             <div class="flex-row">
-                <label for="direct-intensity">Direct Light Intensity:</label>
-                <input type="range" id="direct-intensity" min="0" max="5" step="0.1" value="1">
-                <span id="intensity-value">1.0</span>
+              <label for="bottom-angle">View Angle (degrees):</label>
+              <input type="number" id="bottom-angle" min="90" max="180" value="135" />
+              <span class="helper-text">180° = bottom-up view</span>
             </div>
-
             <div class="flex-row">
-                <label for="direct-color">Direct Light Color:</label>
-                <input type="color" id="direct-color" value="#ffffff">
+              <label for="angle-bottom">Number of Images:</label>
+              <input type="number" id="angle-bottom" min="0" max="20" value="5" />
             </div>
+          </div>
         </div>
 
-        <div class="control-group">
-            <h3>Export Settings</h3>
-
-            <div class="flex-row">
-                <label for="bg-type">Background Type:</label>
-                <select id="bg-type">
-                    <option value="transparent">Transparent</option>
-                    <option value="color">Color</option>
-                    <option value="environment">Environment (HDR)</option>
-                </select>
-            </div>
-
-            <div class="flex-row" id="bg-color-row">
-                <label for="bg-color">Background Color:</label>
-                <input type="color" id="bg-color" value="#ffffff">
-            </div>
-
-            <h4>Camera Views</h4>
-
-            <!-- Top View Controls -->
-            <div class="camera-view-controls">
-                <div class="view-enabled">
-                    <input type="checkbox" id="top-view-enabled" checked>
-                    <label for="top-view-enabled">Top View</label>
-                </div>
-                <div id="top-view-params" class="camera-params collapsible expanded">
-                    <div class="flex-row">
-                        <label for="top-rotation">Rotation (degrees):</label>
-                        <input type="number" id="top-rotation" min="0" max="360" value="140">
-                        <span class="helper-text">Horizontal rotation around the object</span>
-                    </div>
-                    <div class="flex-row">
-                        <label for="top-angle">View Angle (degrees):</label>
-                        <input type="number" id="top-angle" min="0" max="90" value="45">
-                        <span class="helper-text">0° = top-down, 90° = horizontal</span>
-                    </div>
-                    <div class="flex-row">
-                        <label for="angle-top">Number of Images:</label>
-                        <input type="number" id="angle-top" min="0" max="20" value="5">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Middle View Controls -->
-            <div class="camera-view-controls">
-                <div class="view-enabled">
-                    <input type="checkbox" id="middle-view-enabled" checked>
-                    <label for="middle-view-enabled">Middle View</label>
-                </div>
-                <div id="middle-view-params" class="camera-params collapsible expanded">
-                    <div class="flex-row">
-                        <label for="middle-rotation">Rotation (degrees):</label>
-                        <input type="number" id="middle-rotation" min="0" max="360" value="140">
-                        <span class="helper-text">Horizontal rotation around the object</span>
-                    </div>
-                    <div class="flex-row">
-                        <label for="middle-angle">View Angle (degrees):</label>
-                        <input type="number" id="middle-angle" min="0" max="180" value="90">
-                        <span class="helper-text">90° = horizontal view</span>
-                    </div>
-                    <div class="flex-row">
-                        <label for="angle-middle">Number of Images:</label>
-                        <input type="number" id="angle-middle" min="0" max="20" value="5">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom View Controls -->
-            <div class="camera-view-controls">
-                <div class="view-enabled">
-                    <input type="checkbox" id="bottom-view-enabled" checked>
-                    <label for="bottom-view-enabled">Bottom View</label>
-                </div>
-                <div id="bottom-view-params" class="camera-params collapsible expanded">
-                    <div class="flex-row">
-                        <label for="bottom-rotation">Rotation (degrees):</label>
-                        <input type="number" id="bottom-rotation" min="0" max="360" value="140">
-                        <span class="helper-text">Horizontal rotation around the object</span>
-                    </div>
-                    <div class="flex-row">
-                        <label for="bottom-angle">View Angle (degrees):</label>
-                        <input type="number" id="bottom-angle" min="90" max="180" value="135">
-                        <span class="helper-text">180° = bottom-up view</span>
-                    </div>
-                    <div class="flex-row">
-                        <label for="angle-bottom">Number of Images:</label>
-                        <input type="number" id="angle-bottom" min="0" max="20" value="5">
-                    </div>
-                </div>
-            </div>
-
-            <h4>Camera Distances</h4>
-            <div class="distance-checkboxes">
-                <div class="flex-row">
-                    <input type="checkbox" id="dist-close" checked>
-                    <label for="dist-close">Close</label>
-                </div>
-                <div class="flex-row">
-                    <input type="checkbox" id="dist-medium" checked>
-                    <label for="dist-medium">Medium</label>
-                </div>
-                <div class="flex-row">
-                    <input type="checkbox" id="dist-far" checked>
-                    <label for="dist-far">Far</label>
-                </div>
-            </div>
-
-            <div class="export-summary">
-                <p>Total images to export: <span id="total-images-count">0</span></p>
-            </div>
-
-            <button id="export-btn">Export Images</button>
+        <h4>Camera Distances</h4>
+        <div class="distance-checkboxes">
+          <div class="flex-row">
+            <input type="checkbox" id="dist-close" checked />
+            <label for="dist-close">Close</label>
+          </div>
+          <div class="flex-row">
+            <input type="checkbox" id="dist-medium" checked />
+            <label for="dist-medium">Medium</label>
+          </div>
+          <div class="flex-row">
+            <input type="checkbox" id="dist-far" checked />
+            <label for="dist-far">Far</label>
+          </div>
         </div>
 
-        <button id="reset-camera">Reset Camera</button>
+        <div class="export-summary">
+          <p>Total images to export: <span id="total-images-count">0</span></p>
+        </div>
+
+        <button id="export-btn">Export Images</button>
+      </div>
+
+      <button id="reset-camera">Reset Camera</button>
     </div>
 
     <div id="progress-container">
-        <h3>Exporting Images</h3>
-        <p id="export-status">Processing: 0/0</p>
-        <div id="progress-bar">
-            <div id="progress"></div>
-        </div>
+      <h3>Exporting Images</h3>
+      <p id="export-status">Processing: 0/0</p>
+      <div id="progress-bar">
+        <div id="progress"></div>
+      </div>
     </div>
 
     <!-- Import the main JavaScript module -->
     <script type="module" src="./src/main.js"></script>
-</body>
+  </body>
 </html>
