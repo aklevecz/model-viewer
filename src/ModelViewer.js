@@ -34,6 +34,8 @@ export class ModelViewer {
   }
 
   init() {
+    // this.loadSettings();
+
     // Scene setup
     this.scene = new THREE.Scene();
 
@@ -218,6 +220,19 @@ export class ModelViewer {
       console.log(e.target.checked);
       this.squareVisible = e.target.checked;
       this.updateNormalizationSquare();
+    });
+
+    const settingsControls = ["bg-type", "bg-color", "hdr-selection", "exposure", "direct-intensity", "direct-color"];
+
+    settingsControls.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener("change", () => this.saveSettings());
+        // For range inputs, also listen for input events
+        if (element.type === "range") {
+          element.addEventListener("input", () => this.saveSettings());
+        }
+      }
     });
 
     // Initial calls
@@ -735,5 +750,82 @@ export class ModelViewer {
 
     // Re-render at original size
     this.render();
+  }
+
+  // Add these methods to your ModelViewer class
+
+  // Save current settings to localStorage
+  saveSettings() {
+    const settings = {
+      // Background settings
+      bgType: document.getElementById("bg-type").value,
+      bgColor: document.getElementById("bg-color").value,
+      hdrSelection: document.getElementById("hdr-selection").value,
+
+      // Camera settings
+      cameraFOV: this.camera.fov,
+
+      // Lighting settings
+      exposure: this.renderer.toneMappingExposure,
+      directIntensity: this.directionalLight.intensity,
+      directColor: "#" + this.directionalLight.color.getHexString(),
+    };
+
+    // Save to localStorage
+    localStorage.setItem("modelViewerSettings", JSON.stringify(settings));
+    console.log("Settings saved");
+  }
+
+  // Load settings from localStorage
+  loadSettings() {
+    const savedSettings = localStorage.getItem("modelViewerSettings");
+
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+
+      // Apply background settings
+      if (settings.bgType) {
+        document.getElementById("bg-type").value = settings.bgType;
+      }
+
+      if (settings.bgColor) {
+        document.getElementById("bg-color").value = settings.bgColor;
+      }
+
+      if (settings.hdrSelection) {
+        document.getElementById("hdr-selection").value = settings.hdrSelection;
+        this.loadHDR(settings.hdrSelection);
+      }
+
+      // Apply camera settings
+      if (settings.cameraFOV) {
+        this.camera.fov = settings.cameraFOV;
+        this.camera.updateProjectionMatrix();
+      }
+
+      // Apply lighting settings
+      if (settings.exposure) {
+        this.renderer.toneMappingExposure = settings.exposure;
+        document.getElementById("exposure").value = settings.exposure;
+        document.getElementById("exposure-value").textContent = settings.exposure.toFixed(2);
+      }
+
+      if (settings.directIntensity) {
+        this.directionalLight.intensity = settings.directIntensity;
+        document.getElementById("direct-intensity").value = settings.directIntensity;
+        document.getElementById("intensity-value").textContent = settings.directIntensity.toFixed(1);
+      }
+
+      if (settings.directColor) {
+        this.directionalLight.color.set(settings.directColor);
+        document.getElementById("direct-color").value = settings.directColor;
+      }
+
+      // Update UI
+      this.updateBackgroundVisibility();
+      this.updateBackgroundPreview();
+
+      console.log("Settings loaded");
+    }
   }
 }
