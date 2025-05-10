@@ -14,6 +14,8 @@
     "three": "^0.151.3"
   },
   "devDependencies": {
-    "vite": "^6.3.5"
+    "@cloudflare/vite-plugin": "^1.1.1",
+    "vite": "^6.3.5",
+    "wrangler": "^4.14.4"
   }
 }
