@@ -1,8 +1,7 @@
 {
-  "name": "model-viewer",
-  "compatibility_date": "2025-04-03",
-  "main": "./src/main.js",
-  "assets": {
-    "directory": "./dist"
-  }
+    "name":"model-image-renderer",
+    "compatibility_date": "2025-01-01",
+    "assets": {
+        "directory":"./dist"
+    }
 }
